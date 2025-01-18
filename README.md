@@ -12,10 +12,13 @@
        stringify
     );
     
-    my $fn = match("/:foo/:bar");
-    
-    &$fn("/test/route");
+    *fn = match("/:foo/:bar");
+    fn("/test/route");
     # $_ = { path => '/test/route', params => { foo => 'test', bar => 'route' } }
+
+    my $fn = match("/file/{:name}{.:ext}");
+    &$fn("/file/test.jpg");
+    # $_ = { path => '/file/test.jpg', params => { name => 'test', ext => 'jpg' } }
 
 # DESCRIPTION
 
@@ -33,37 +36,37 @@ More information about ReDoS attacks can be found here:
 
 Parameters match arbitrary strings in a path by matching up to the end of the segment, or up to any proceeding tokens. They are defined by prefixing a colon to the parameter name (`:foo`). Parameter names can use any valid JavaScript identifier, or be double quoted to use other characters (`:"param-name"`).
 
-    my $fn = match("/:foo/:bar");
+    *fn = match("/:foo/:bar");
 
-    &$fn("/test/route");
+    fn("/test/route");
     # $_ = { path => '/test/route', params => { foo => 'test', bar => 'route' } }
 
 # WILDCARD
 
 Wildcard parameters match one or more characters across multiple segments. They are defined the same way as regular parameters, but are prefixed with an asterisk (`*foo`).
 
-    my $fn = match("/*splat");
+    *fn = match("/*splat");
 
-    &$fn("/bar/baz");
+    fn("/bar/baz");
     # $_ = { path => '/bar/baz', params => { splat => [ 'bar', 'baz' ] } }
 
 # OPTIONAL
 
 Braces can be used to define parts of the path that are optional.
 
-    my $fn = match("/users{/:id}/delete");
+    *fn = match("/users{/:id}/delete");
     
-    &$fn("/users/delete");
+    fn("/users/delete");
     # $_ = { path => '/users/delete', params => {} }
     
-    &$fn("/users/123/delete");
+    fn("/users/123/delete");
     # $_ = { path => '/users/123/delete', params => { id => '123' } }
 
 # METHODS
 
 ## match
 
-    my $fn = match("/foo/:bar");
+    *fn = match("/foo/:bar");
 
 The `match` function returns a function for matching strings against a path:
 
@@ -87,6 +90,54 @@ and an array of `keys` for understanding the `RegExp` matches.
     - **delimiter** The default delimiter for segments, e.g. `[^/]` for `:named` parameters. (default: `'/'`)
     - **trailing** Allows optional trailing delimiter to match. (default: `1`)
 
+## compile ("Reverse" Path-To-RegExp)
+
+    *toPath = compile("/user/:id");
+    
+    toPath({ id => "name" }); # $_ = "/user/name"
+    toPath({ id => "café" }); # $_ = "/user/caf%C3%A9"
+    
+    *toPathRepeated = compile("/*segment");
+    
+    toPathRepeated({ segment => ["foo"] }); # $_ = "/foo"
+    toPathRepeated({ segment => ["a", "b", "c"] }); # $_ = "/a/b/c"
+
+    # When disabling C<encode>, you need to make sure inputs are encoded correctly. No arrays are accepted.
+    *toPathRaw = compile("/user/:id", { encode => 0 });
+    
+    toPathRaw({ id => "%3A%2F" }); # $_ = "/user/%3A%2F"
+
+The `compile` function will return a function for transforming parameters into a valid path:
+
+- **path** A string.
+- **options** _(optional)_ (See parse for more options)
+    - **delimiter** The default delimiter for segments, e.g. `[^/]` for `:named` parameters. (default: `'/'`)
+    - **encode** Function for encoding input strings for output into the path, or `undef` to disable entirely. (default: `encodeURIComponent`)
+
+## stringify
+
+    my $data = Regexp::PathToRegexp::TokenData->new([
+        { type => 'text', value => "/" },
+        { type => 'param', name => "foo" },
+    ]);
+    my $path = stringify($data);    # $path = "/:foo"
+
+The `stringify` transform `TokenData` (a sequence of tokens) back into a Path-to-RegExp string.
+
+- **data** A Regexp::PathToRegexp::TokenData instance
+
+## parse
+
+    my $data = parse("/user/:id"); # ref($data) eq "Regexp::PathToRegexp::TokenData"
+    my $path = stringify($data);   # $path = "/user/:id"
+
+The `parse` function accepts a string and returns an instance of `Regexp::PathToRegexp::TokenData`, the set of tokens and other metadata parsed from the input string.
+&#x3d;over
+
+- **path** A string.
+- **options** _(optional)_
+    - **encodePath** A function for encoding input strings. (default: no encoding)
+
 # AUTHOR
 
 Jens Wagner <jens@wagner2013.de>
@@ -96,6 +147,14 @@ Based on the `path-to-regexp` node package:
 
 # COPYRIGHT AND LICENSE
 
-Copyright 2025 Jens Wagner
+(c)2025 Jens Wagner
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 579:
+
+    '=item' outside of any '=over'
