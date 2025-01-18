@@ -132,7 +132,6 @@ The `stringify` transform `TokenData` (a sequence of tokens) back into a Path-to
     my $path = stringify($data);   # $path = "/user/:id"
 
 The `parse` function accepts a string and returns an instance of `Regexp::PathToRegexp::TokenData`, the set of tokens and other metadata parsed from the input string.
-&#x3d;over
 
 - **path** A string.
 - **options** _(optional)_
@@ -150,11 +149,3 @@ Based on the `path-to-regexp` node package:
 (c)2025 Jens Wagner
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 579:
-
-    '=item' outside of any '=over'

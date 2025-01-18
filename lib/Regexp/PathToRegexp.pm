@@ -574,6 +574,7 @@ sub stringify($) {
  my $path = stringify($data);   # $path = "/user/:id"
 
 The C<parse> function accepts a string and returns an instance of C<Regexp::PathToRegexp::TokenData>, the set of tokens and other metadata parsed from the input string.
+
 =over
 
 =item B<path> A string.
