@@ -60,6 +60,10 @@ C<Regexp::PathToRegexp> - Turn a path string such as C</user/:name> into a regul
 This is a port of the excellent Node.js package C<path-to-regexp> to the Perl programming language.
 The C<path-to-regexp> package is a core component of the widely used C<express.js> framework. All kudos go to B<Blake Embrey> and the other contributors.
 
+The original code/project can be found here:
+
+L<https://github.com/pillarjs/path-to-regexp>
+
 This Perl package is currently based on the version C<8.2> of the original Node.js package, which has been completely rewamped and hardened against ReDoS attacks.
 
 More information about ReDoS attacks can be found here:

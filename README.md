@@ -25,6 +25,10 @@
 This is a port of the excellent Node.js package `path-to-regexp` to the Perl programming language.
 The `path-to-regexp` package is a core component of the widely used `express.js` framework. All kudos go to **Blake Embrey** and the other contributors.
 
+The original code/project can be found here:
+
+[https://github.com/pillarjs/path-to-regexp](https://github.com/pillarjs/path-to-regexp)
+
 This Perl package is currently based on the version `8.2` of the original Node.js package, which has been completely rewamped and hardened against ReDoS attacks.
 
 More information about ReDoS attacks can be found here:
